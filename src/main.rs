@@ -18,7 +18,7 @@ async fn main() -> Result<(), std::io::Error> {
         .connect_lazy_with(
             configuration
             .database
-            .connection_options()
+            .connect_options()
     );
 
     
