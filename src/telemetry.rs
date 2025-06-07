@@ -1,15 +1,15 @@
-use tokio::task::JoinHandle;
-use tracing::{Subscriber, subscriber::set_global_default};
-use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
-use tracing_log::LogTracer;
-use tracing_subscriber::fmt::MakeWriter;
-use tracing_subscriber::{EnvFilter, Registry, layer::SubscriberExt};
 use opentelemetry::trace::TracerProvider;
 use opentelemetry::{KeyValue, global};
 use opentelemetry_otlp::WithExportConfig;
 use opentelemetry_sdk::{Resource, propagation::TraceContextPropagator};
 use opentelemetry_semantic_conventions::resource;
 use std::sync::LazyLock;
+use tokio::task::JoinHandle;
+use tracing::{Subscriber, subscriber::set_global_default};
+use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
+use tracing_log::LogTracer;
+use tracing_subscriber::fmt::MakeWriter;
+use tracing_subscriber::{EnvFilter, Registry, layer::SubscriberExt};
 
 const APP_NAME: &str = "newsletter";
 

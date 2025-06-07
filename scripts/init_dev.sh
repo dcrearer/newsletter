@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
- podman run --rm -it -p 8000:8000 --name newsletter newsletter:latest
+ podman run --rm -d -p 8000:8000 --name newsletter newsletter:latest

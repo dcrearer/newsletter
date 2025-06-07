@@ -2,11 +2,11 @@
 use newsletter::configuration::{DatabaseSettings, get_configuration};
 use newsletter::startup;
 use newsletter::telemetry::{get_subscriber, init_subscriber};
+use secrecy::Secret;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 use std::sync::LazyLock;
 use uuid::Uuid;
-use secrecy::Secret;
 
 static TRACING: LazyLock<()> = LazyLock::new(|| {
     let default_filter = "info".into();
@@ -27,11 +27,10 @@ pub struct TestApp {
 async fn spawn_app() -> TestApp {
     LazyLock::force(&TRACING);
 
-    let listener = TcpListener::bind("127.0.0.1:0")
-        .expect("Failed to bind random port");
+    let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
-    
+
     let mut configuration = get_configuration().expect("Failed to read configuration.");
     configuration.database.database_name = Uuid::new_v4().to_string();
     let connection_pool = configure_database(&configuration.database).await;
@@ -68,7 +67,6 @@ pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
 }
 
 #[tokio::test]
-#[tracing::instrument]
 async fn health_check_works() {
     let app = spawn_app().await;
     let client = reqwest::Client::new();
@@ -130,6 +128,33 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
             response.status().as_u16(),
             "The API did not fail with 400 Bad Request when the payload was {}",
             error_message
+        );
+    }
+}
+
+#[tokio::test]
+async fn subscribe_returns_a_400_when_fields_are_present_but_invalid() {
+    let app = spawn_app().await;
+    let client = reqwest::Client::new();
+    let test_cases = vec![
+        ("name=&email=ursula_le_guin%40gmail.com", "empty name"),
+        ("name=Ursula&email=", "empty email"),
+        ("name=Ursula&email=definitely-not-an-email", "invalid email"),
+    ];
+
+    for (body, description) in test_cases {
+        let response = client
+            .post(&format!("{}/subscriptions", &app.address))
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(body)
+            .send()
+            .await
+            .expect("Failed to execute request.");
+        assert_eq!(
+            400,
+            response.status().as_u16(),
+            "The API did not return a 400 Bad Request when the payload was {}.",
+            description
         );
     }
 }
