@@ -25,7 +25,7 @@ opentelemetry-semantic-conventions = "0.28"
 serde-aux = "4"
 unicode-segmentation = "1"
 validator = "0.18"
-
+reqwest = { version = "0.12", features = ["json"] }
 
 [dependencies.sqlx]
 version = "0.8"
@@ -45,7 +45,9 @@ fake = "2.9"
 quickcheck = "1.0.3"
 quickcheck_macros = "1"
 rand = "0.8"
-reqwest = "0.12"
+serde_json = "1"
+tokio = { version = "1", features = ["rt", "macros"] }
+wiremock = "0.6"
 
 [lib]
 path = "src/lib.rs"
