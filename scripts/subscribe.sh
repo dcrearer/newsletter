@@ -2,4 +2,4 @@
 
 SUBSCRIBE=~/Dev/rust/zero2prod/scripts/subscribe.json
 
-newman run $SUBSCRIBE -n 1000 --delay-request 5
+newman run $SUBSCRIBE -n 100 --delay-request 5
