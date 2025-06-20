@@ -2,14 +2,14 @@
 use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
 use crate::email_client::EmailClient;
 use crate::startup::ApplicationBaseUrl;
+use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError, web};
+use anyhow::Context;
 use chrono::Utc;
 use rand::distributions::Alphanumeric;
 use rand::{Rng, thread_rng};
 use sqlx::{Executor, PgPool, Postgres, Transaction};
 use uuid::Uuid;
-use actix_web::http::StatusCode;
-use anyhow::Context;
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
@@ -26,18 +26,23 @@ pub async fn subscribe(
     base_url: web::Data<ApplicationBaseUrl>,
 ) -> Result<HttpResponse, SubscribeError> {
     let new_subscriber = form.0.try_into().map_err(SubscribeError::ValidationError)?;
-    let mut transaction = pool.begin()
-        .await.context("Failed to acquire a Postgres connection from pool.")?;
+    let mut transaction = pool
+        .begin()
+        .await
+        .context("Failed to acquire a Postgres connection from pool.")?;
     let subscriber_id = insert_subscriber(&mut transaction, &new_subscriber)
-        .await.context("Failed to insert new subscriber in the database.")?;
+        .await
+        .context("Failed to insert new subscriber in the database.")?;
     let subscription_token = generate_subscription_token();
 
     store_token(&mut transaction, subscriber_id, &subscription_token)
-        .await.context("Failed to store the confirmation token for a new subscriber.")?;
+        .await
+        .context("Failed to store the confirmation token for a new subscriber.")?;
 
     transaction
         .commit()
-        .await.context("Failed to commit SQL transaction to store a new subscriber.")?;
+        .await
+        .context("Failed to commit SQL transaction to store a new subscriber.")?;
 
     send_confirmation_email(
         &email_client,
@@ -45,7 +50,8 @@ pub async fn subscribe(
         &base_url.0,
         &subscription_token,
     )
-    .await.context("Failed to send a confirmation email.")?;
+    .await
+    .context("Failed to send a confirmation email.")?;
 
     Ok(HttpResponse::Ok().finish())
 }
@@ -74,7 +80,7 @@ pub async fn send_confirmation_email(
         confirmation_link
     );
     email_client
-        .send_email(new_subscriber.email, "Welcome!", &html_body, &plain_body)
+        .send_email(&new_subscriber.email, "Welcome!", &html_body, &plain_body)
         .await
 }
 
@@ -96,9 +102,7 @@ pub async fn insert_subscriber(
         new_subscriber.name.as_ref(),
         Utc::now()
     );
-    transaction.execute(query).await.map_err(|e| {
-        e
-    })?;
+    transaction.execute(query).await.map_err(|e| e)?;
     Ok(subscriber_id)
 }
 
@@ -117,9 +121,10 @@ async fn store_token(
         subscription_token,
         subscriber_id
     );
-    transaction.execute(query).await.map_err(|e| {
-        StoreTokenError(e)
-    })?;
+    transaction
+        .execute(query)
+        .await
+        .map_err(|e| StoreTokenError(e))?;
     Ok(())
 }
 
@@ -186,8 +191,10 @@ impl std::fmt::Display for StoreTokenError {
     }
 }
 
-fn error_chain_fmt(e: &impl std::error::Error, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-{
+pub fn error_chain_fmt(
+    e: &impl std::error::Error,
+    f: &mut std::fmt::Formatter<'_>,
+) -> std::fmt::Result {
     writeln!(f, "{}", e)?;
     let mut current = e.source();
     while let Some(cause) = current {
