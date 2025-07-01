@@ -1,4 +1,4 @@
-# newsletter
+# Newsletter
 
 A production-ready web application built with Rust, following the principles outlined in the "Zero To Production In Rust" approach. This project implements a newsletter delivery service with user subscription management.
 
