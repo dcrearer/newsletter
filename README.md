@@ -1,29 +1,27 @@
-# Newsletter Service
+# newsletter
 
-A robust newsletter subscription and delivery service built with Rust.
-
-## Overview
-
-This project is a web service that allows users to subscribe to a newsletter. It's built using Rust with Actix-Web as the web framework and PostgreSQL for data storage.
+A production-ready web application built with Rust, following the principles outlined in the "Zero To Production In Rust" approach. This project implements a newsletter delivery service with user subscription management.
 
 ## Features
 
-- Newsletter subscription management
-- Secure data handling with input validation
+- User subscription system with email confirmation
+- Newsletter creation and delivery
+- Health check endpoint
 - Telemetry and logging with OpenTelemetry
 - Database migrations with SQLx
-- Containerized deployment with Podman
+- Comprehensive test suite
 
 ## Tech Stack
 
-- **Language**: Rust
-- **Web Framework**: Actix-Web
+- **Backend Framework**: Actix-Web
 - **Database**: PostgreSQL with SQLx
+- **Async Runtime**: Tokio
 - **Configuration**: config-rs
-- **Logging**: tracing, tracing-bunyan-formatter
-- **Telemetry**: OpenTelemetry
-- **Testing**: claims, fake, quickcheck
-- **Containerization**: Podman
+- **Logging/Tracing**: tracing, tracing-subscriber, OpenTelemetry
+- **Email**: Custom email client
+- **Testing**: Tokio test, wiremock, quickcheck
+- **Error Handling**: thiserror, anyhow
+- **Security**: secrecy for sensitive data
 
 ## Getting Started
 
@@ -31,59 +29,78 @@ This project is a web service that allows users to subscribe to a newsletter. It
 
 - Rust (latest stable version)
 - PostgreSQL
-- Podman (optional, for containerized deployment)
+- Docker (optional, for containerized deployment)
 
 ### Setup
 
-1. Clone the repository
-2. Set up the database:
-   ```bash
-   # Run migrations
-   sqlx database create
-   sqlx migrate run
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd newsletter
    ```
 
-3. Configure environment variables (see `.env` file)
+2. Set up the database:
+   ```
+   # Create a PostgreSQL database for the application
+   # Update configuration in configuration files
+   ```
 
-4. Build and run:
-   ```bash
-   cargo build
+3. Run the application:
+   ```
    cargo run
    ```
 
-### Running with Podman
+4. Run tests:
+   ```
+   cargo test
+   ```
 
-```bash
-podman build -t newsletter .
-podman run -p 8000:8000 newsletter
-```
+### Configuration
+
+The application uses a layered configuration system:
+- Base configuration in `configuration/base.yaml`
+- Environment-specific overrides in `configuration/{environment}.yaml`
+- Environment variables for sensitive information
 
 ## Project Structure
 
-- `src/` - Application source code
-- `configuration/` - Configuration files
-- `migrations/` - Database migrations
-- `scripts/` - Utility scripts
-- `tests/` - Integration tests
+- `src/`: Application source code
+   - `configuration/`: Configuration management
+   - `domain/`: Domain models and business logic
+   - `email_client/`: Email delivery functionality
+   - `routes/`: API endpoints
+   - `startup/`: Application initialization
+   - `telemetry/`: Logging and monitoring
+
+- `tests/`: Integration tests
+   - `api/`: API tests for each endpoint
+
+## Scripts
+
+The `scripts/` directory contains utility scripts for development, deployment, and maintenance tasks.
 
 ## Development
 
-### Running Tests
+### Running in Development Mode
 
-```bash
-cargo test
+```
+cargo run
 ```
 
-### Checking Code
+### Running Tests
 
-```bash
-cargo check
+```
+cargo test
 ```
 
 ## Deployment
 
-The service can be deployed using the provided `spec.yaml` configuration.
+The application can be deployed as a standalone binary or containerized with Docker.
 
 ## License
 
-[MIT](LICENSE)
+[License information]
+
+## Acknowledgments
+
+Based on the "Zero To Production In Rust" approach to building production-ready web services.
