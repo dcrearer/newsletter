@@ -1,5 +1,5 @@
 # Builder stage
-FROM rust:1.87.0 AS builder
+FROM rust:1.88.0 AS builder
 
 WORKDIR /app
 RUN apt update && apt install lld clang -y

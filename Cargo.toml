@@ -8,7 +8,6 @@ edition = "2024"
 actix-web = "4"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"]}
 serde = { version = "1", features = ["derive"]}
-config = "0.14"
 uuid = { version = "1", features = ["serde", "v4"] }
 chrono = { version = "0.4.22", default-features = false, features = ["clock"]}
 tracing-subscriber = { version = "0.3", features = ["registry", "env-filter"]}
@@ -27,17 +26,13 @@ unicode-segmentation = "1"
 validator = "0.18"
 rand = { version = "0.8", features = ["std_rng"] }
 thiserror = "1"
-anyhow = "1"
-base64 = "0.22"
+config = "0.14"
 argon2 = { version = "0.5", features = ["std"] }
-urlencoding = "2"
-htmlescape = "0.3"
-hmac = { version = "0.12", features = ["std"] }
-sha2 = "0.10"
-hex = "0.4"
 actix-web-flash-messages = { version = "0.5", features = ["cookies"] }
 actix-session = { version = "0.10", features = ["redis-session-rustls"] }
 serde_json = "1"
+serde_urlencoded = "0.7.1"
+anyhow = "1.0.98"
 
 [dependencies.reqwest]
 version = "0.12"
@@ -57,6 +52,7 @@ features = [
 ]
 
 [dev-dependencies]
+serde_urlencoded= "0.7.1"
 claims = "0.7"
 fake = "2.9"
 linkify = "0.10"

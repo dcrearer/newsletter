@@ -1,20 +1,22 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT email FROM subscriptions WHERE status = 'confirmed'",
+  "query": "SELECT username FROM users WHERE user_id = $1",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "email",
+        "name": "username",
         "type_info": "Text"
       }
     ],
     "parameters": {
-      "Left": []
+      "Left": [
+        "Uuid"
+      ]
     },
     "nullable": [
       false
     ]
   },
-  "hash": "16570a44effde933baf95e2ddc654389dcabb5cf1561e2a9ff9d6977a64e0c71"
+  "hash": "0b606d83801451c5b8c5fe5430c39b621d0a40b05db410aba5a757fd5cedfaf7"
 }

@@ -1,6 +1,7 @@
 #! configuration/base.yaml
 application:
   port: 8000
+  host: 0.0.0.0
   hmac_secret: "long-and-very-secret-random-key-needed-to-verify-message-integrity"
 database:
   host: "localhost"
@@ -8,9 +9,10 @@ database:
   username: "postgres"
   password: "password"
   database_name: "newsletter"
+  require_ssl: false
 email_client:
   base_url: "localhost"
   sender_email: "test@gmail.com"
-  authorization_token: "secret-token"
+  authorization_token: "d61cb2b0-1188-4fde-8f18-db737197f2a8"
   timeout_milliseconds: 10000
 redis_uri: "redis://127.0.0.1:6379"

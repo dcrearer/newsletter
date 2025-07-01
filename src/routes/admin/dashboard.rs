@@ -1,19 +1,18 @@
 //! src/routes/admin/dashboards.rs
 use crate::session_state::TypedSession;
+use crate::utils::e500;
 use actix_web::http::header::ContentType;
 use actix_web::http::header::LOCATION;
 use actix_web::{HttpResponse, web};
 use anyhow::Context;
 use sqlx::PgPool;
 use uuid::Uuid;
-use crate::utils::e500;
 
 pub async fn admin_dashboard(
     session: TypedSession,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, actix_web::Error> {
-    let username = if let Some(user_id) = session.get_user_id()
-        .map_err(e500)? {
+    let username = if let Some(user_id) = session.get_user_id().map_err(e500)? {
         get_username(user_id, &pool).await.map_err(e500)?
     } else {
         return Ok(HttpResponse::SeeOther()

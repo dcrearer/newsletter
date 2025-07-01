@@ -18,6 +18,7 @@ static RESOURCE: LazyLock<Resource> = LazyLock::new(|| {
         .with_attribute(KeyValue::new(resource::SERVICE_NAME, APP_NAME))
         .build()
 });
+
 pub fn get_subscriber<Sink>(env_filter: String, sink: Sink) -> impl Subscriber + Send + Sync
 where
     Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static,
